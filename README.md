@@ -304,4 +304,3 @@ These scripts are provided as-is for personal use. Modify as needed for your env
 
 **Happy migrating! 🚀**
 
-*Last updated: $(date)* 
