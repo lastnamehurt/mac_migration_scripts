@@ -12,7 +12,6 @@ copy_with_timeout() {
 
 # ── Only GUI apps go here ──
 declare -a MANUAL_APPS=(
-  "OpenLens.app"
   "MongoDB Compass.app"
   "Miro.app"
   "Spectacle.app"
@@ -115,19 +114,108 @@ echo "☁️  Copying cloud configs..."
 [[ -d "$HOME/.kube" ]] && cp -R "$HOME/.kube" "$DOTFILES_DIR/.kube"
 [[ -d "$HOME/.aws"  ]] && cp -R "$HOME/.aws"  "$DOTFILES_DIR/.aws"
 
+# 10a. eks-node-viewer config
+echo "🔍 Copying eks-node-viewer config..."
+[[ -f "$HOME/.eks-node-viewer" ]] && cp "$HOME/.eks-node-viewer" "$DOTFILES_DIR/.eks-node-viewer"
+
 # 11. Chrome profile
 echo "🌐 Copying Chrome profile..."
-[[ -d "$HOME/Library/Application Support/Google/Chrome/Default" ]] &&
-  tar czf "$DOTFILES_DIR/ChromeProfile.tar.gz" -C "$HOME/Library/Application Support/Google/Chrome" Default
+if [[ -d "$HOME/Library/Application Support/Google/Chrome/Default" ]]; then
+  echo "   📦 Compressing Chrome profile..."
+  # Try tar.gz first, then zip if tar.gz fails
+  if tar czf "$DOTFILES_DIR/ChromeProfile.tar.gz" -C "$HOME/Library/Application Support/Google/Chrome" Default 2>/dev/null; then
+    echo "   ✅ Chrome profile compressed as ChromeProfile.tar.gz"
+  elif zip -r "$DOTFILES_DIR/ChromeProfile.zip" Default -C "$HOME/Library/Application Support/Google/Chrome" 2>/dev/null; then
+    echo "   ✅ Chrome profile compressed as ChromeProfile.zip"
+  else
+    echo "   ⚠️  Failed to compress Chrome profile"
+  fi
+fi
 
-# 12. Workspace
-echo "💼 Compressing workspace..."
-[[ -d "$HOME/workspace" ]] && tar czf "$DOTFILES_DIR/workspace.tar.gz" -C "$HOME" workspace
+# 12. Workspace and workspace files
+echo "💼 Compressing workspace and workspace files..."
+
+# Capture workspace directory if it exists
+if [[ -d "$HOME/workspace" ]]; then
+    echo "   📦 Compressing workspace directory..."
+    # Try tar.gz first, then zip if tar.gz fails
+    if tar czf "$DOTFILES_DIR/workspace.tar.gz" -C "$HOME" workspace 2>/dev/null; then
+        echo "   ✅ Workspace compressed as workspace.tar.gz"
+    elif zip -r "$DOTFILES_DIR/workspace.zip" workspace -C "$HOME" 2>/dev/null; then
+        echo "   ✅ Workspace compressed as workspace.zip"
+    else
+        echo "   ⚠️  Failed to compress workspace directory"
+    fi
+fi
+
+# Capture important workspace root files and directories
+echo "📁 Capturing workspace root files..."
+WORKSPACE_ROOT_FILES=(
+  ".zsh_history"
+  ".viminfo"
+  ".lesshst"
+  ".gitconfig"
+  ".pryrc"
+  ".npmrc"
+  ".p10k.zsh"
+  ".ideavimrc"
+  ".vimrc"
+  ".zprofile"
+  ".yarnrc"
+  ".tool-versions"
+)
+
+WORKSPACE_ROOT_DIRS=(
+  ".tsh"
+  ".kube"
+  ".thor"
+  ".tabnine"
+  ".sonarlint"
+  ".redisinsight-app"
+  ".redis-insight"
+  ".mongodb"
+  ".rustup"
+  ".rbenv"
+  ".pyenv"
+  ".nvm"
+  ".gnupg"
+  ".vim"
+  ".cursor"
+  ".config"
+  ".ssh"
+  ".asdf"
+)
+
+# Copy important workspace root files
+for file in "${WORKSPACE_ROOT_FILES[@]}"; do
+  if [[ -f "$HOME/$file" ]]; then
+    echo "   📄 Copying workspace root file: $file"
+    cp "$HOME/$file" "$DOTFILES_DIR/"
+  fi
+done
+
+# Copy important workspace root directories
+for dir in "${WORKSPACE_ROOT_DIRS[@]}"; do
+  if [[ -d "$HOME/$dir" ]]; then
+    echo "   📁 Copying workspace root directory: $dir"
+    cp -R "$HOME/$dir" "$DOTFILES_DIR/"
+  fi
+done
 
 # 8. User directories (compressed)
 echo "📁 Archiving user directories..."
 for dir in Documents Desktop Downloads; do
-  [[ -d "$HOME/$dir" ]] && tar czf "$DOTFILES_DIR/${dir}.tar.gz" -C "$HOME" "$dir"
+  if [[ -d "$HOME/$dir" ]]; then
+    echo "   📦 Compressing $dir..."
+    # Try tar.gz first, then zip if tar.gz fails
+    if tar czf "$DOTFILES_DIR/${dir}.tar.gz" -C "$HOME" "$dir" 2>/dev/null; then
+      echo "   ✅ $dir compressed as ${dir}.tar.gz"
+    elif zip -r "$DOTFILES_DIR/${dir}.zip" "$dir" -C "$HOME" 2>/dev/null; then
+      echo "   ✅ $dir compressed as ${dir}.zip"
+    else
+      echo "   ⚠️  Failed to compress $dir"
+    fi
+  fi
 done
 
 echo ""
