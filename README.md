@@ -52,13 +52,12 @@ These scripts capture and restore your complete macOS environment, including:
 ### 🖥️ Applications
 
 #### GUI Applications
-- **Development**: Docker, MongoDB Compass, OpenLens
-- **Communication**: Slack, Zoom
+- **Development**: Docker, MongoDB Compass, OpenLens (via Homebrew cask)
 - **Productivity**: Miro, Spectacle, Tuple, Keychron Engine
 - **All Homebrew Casks**: Automatically captured via `brew bundle dump`
 
 #### CLI Tools
-- **Kubernetes**: kubectl, k9s, eksctl, eks-node-viewer, teleport
+- **Kubernetes**: kubectl, k9s, eksctl, kubectx (includes kubens), eks-node-viewer (via AWS tap), teleport
 - **Development**: tsh, glab, vim
 - **All Homebrew Formulae**: Automatically captured
 
@@ -69,6 +68,7 @@ These scripts capture and restore your complete macOS environment, including:
 - `.gitconfig`, `.gitignore_global`
 - `.vimrc`, `.vim/` directory
 - `.ideavimrc`, `.pryrc`, `.npmrc`, `.yarnrc`
+- `.eks-node-viewer` (eks-node-viewer configuration)
 
 #### IDE Configurations
 - **JetBrains**: All IDE settings and preferences
@@ -111,6 +111,21 @@ These scripts capture and restore your complete macOS environment, including:
 - **SonarLint**: Code quality tool configs
 - **Tabnine**: AI code completion settings
 
+### 🗂️ Workspace Files
+
+#### Workspace Root Files
+- **Shell History**: `.zsh_history`, `.viminfo`, `.lesshst`
+- **Development Configs**: `.gitconfig`, `.pryrc`, `.npmrc`, `.yarnrc`
+- **Editor Configs**: `.vimrc`, `.ideavimrc`, `.p10k.zsh`
+- **Shell Configs**: `.zprofile`, `.tool-versions`
+
+#### Workspace Root Directories
+- **Development Tools**: `.asdf`, `.nvm`, `.pyenv`, `.rbenv`, `.rustup`
+- **Cloud & Kubernetes**: `.kube`, `.tsh`, `.ssh`
+- **IDE Configs**: `.cursor`, `.config`, `.vim`
+- **Tool Configs**: `.thor`, `.tabnine`, `.sonarlint`, `.mongodb`, `.redis-insight`, `.redisinsight-app`
+- **Security**: `.gnupg`
+
 ### 🎨 Application Configurations
 
 #### Development Tools
@@ -122,13 +137,14 @@ These scripts capture and restore your complete macOS environment, including:
 ### 📁 User Data
 
 #### Directories
-- **Workspace**: All development projects
-- **Documents**: Personal documents
-- **Desktop**: Desktop files
-- **Downloads**: Downloaded files
+- **Workspace**: All development projects (compressed as .tar.gz or .zip)
+- **Workspace Root Files**: Important configuration files from workspace root
+- **Documents**: Personal documents (compressed as .tar.gz or .zip)
+- **Desktop**: Desktop files (compressed as .tar.gz or .zip)
+- **Downloads**: Downloaded files (compressed as .tar.gz or .zip)
 
 #### Browser Data
-- **Chrome Profile**: Bookmarks, extensions, settings
+- **Chrome Profile**: Bookmarks, extensions, settings (compressed as .tar.gz or .zip)
 
 ## 🔧 Script Details
 
@@ -146,7 +162,9 @@ These scripts capture and restore your complete macOS environment, including:
 7. Backs up IDE and terminal preferences
 8. Captures SSH/GPG keys and cloud configurations
 9. Archives user directories and browser profiles
-10. Copies additional configuration directories
+10. Copies workspace root files and directories
+11. Compresses workspace directory
+12. Copies additional configuration directories
 
 ### `restore_mac.sh`
 
@@ -155,16 +173,21 @@ These scripts capture and restore your complete macOS environment, including:
 **What it does**:
 1. Installs Xcode Command Line Tools
 2. Installs and configures Homebrew
-3. Installs asdf and language plugins
-4. Restores all Homebrew packages and casks
-5. Installs Mac App Store applications
-6. Copies manual applications
-7. Links all configuration files
-8. Restores IDE and terminal settings
-9. Installs language packages
-10. Restores SSH/GPG keys with proper permissions
-11. Restores cloud and Kubernetes configurations
-12. Extracts user directories and browser data
+3. Installs essential CLI tools (git, kubectl, k9s, eksctl, etc.)
+4. Installs eks-node-viewer via AWS Homebrew tap
+5. Installs OpenLens via Homebrew cask
+6. Installs asdf and language plugins
+7. Restores all Homebrew packages and casks
+8. Installs Mac App Store applications
+9. Copies manual applications
+10. Links all configuration files (including .eks-node-viewer)
+11. Restores IDE and terminal settings
+12. Installs language packages
+13. Restores SSH/GPG keys with proper permissions
+14. Restores cloud and Kubernetes configurations
+15. Restores workspace root files and directories
+16. Extracts workspace directory
+17. Extracts user directories and browser data
 
 ## 🛡️ Security Features
 
