@@ -58,7 +58,7 @@ These scripts capture and restore your complete macOS environment, including:
 
 #### CLI Tools
 - **Kubernetes**: kubectl, k9s, eksctl, kubectx (includes kubens), eks-node-viewer (via AWS tap), teleport
-- **Development**: tsh, glab, vim
+- **Development**: tsh, glab, vim, git-split-diffs
 - **All Homebrew Formulae**: Automatically captured
 
 ### ⚙️ Configurations
@@ -97,7 +97,7 @@ These scripts capture and restore your complete macOS environment, including:
 - **asdf**: Ruby, Node.js, Python, Java, Rust versions
 - **nvm**: Node.js version manager
 - **pyenv**: Python version manager
-- **rbenv**: Ruby version manager
+- **rbenv**: Ruby version manager (with ruby-build)
 - **rustup**: Rust toolchain
 
 #### Package Managers

@@ -44,7 +44,7 @@ fi
 
 # 3. Essential tools with individual checks
 echo "🔧 Installing essential tools..."
-ESSENTIAL_TOOLS=("git" "vim" "kubectl" "k9s" "eksctl" "teleport" "tsh" "glab" "kubectx")
+ESSENTIAL_TOOLS=("git" "vim" "kubectl" "k9s" "eksctl" "teleport" "tsh" "glab" "kubectx" "git-split-diffs" "rbenv" "ruby-build")
 for tool in "${ESSENTIAL_TOOLS[@]}"; do
     if ! brew_installed "$tool"; then
         echo "Installing $tool..."
